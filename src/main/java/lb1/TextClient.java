@@ -1,15 +1,22 @@
-package main.lb1;
+package lb1;
+
+import lombok.SneakyThrows;
 
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
 public class TextClient {
-    public static void main(String[] args) {
-        try {
-            Socket socket = new Socket("localhost", 7777);
-            System.out.println("Connected to server");
+    Socket socket;
 
+    @SneakyThrows
+    public TextClient(String host, int port) {
+        socket = new Socket(host, port);
+        System.out.println("Connected to server");
+    }
+
+    public void connect() {
+        try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
