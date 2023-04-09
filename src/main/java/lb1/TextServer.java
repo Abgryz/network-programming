@@ -15,16 +15,12 @@ public class TextServer {
         System.out.println("Server started");
     }
 
+    @SneakyThrows
     public void start() {
-        try {
-            while (true) {
-                Socket clientSocket = server.accept();
-                System.out.println("Client connected: " + clientSocket);
-
-                new Thread(() -> clientInit(clientSocket)).start();
-            }
-        } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+        while (true) {
+            Socket clientSocket = server.accept();
+            System.out.println("Client connected: " + clientSocket);
+            new Thread(() -> clientInit(clientSocket)).start();
         }
     }
 
