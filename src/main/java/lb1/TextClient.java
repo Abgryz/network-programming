@@ -23,7 +23,7 @@ public class TextClient {
         Scanner scan = new Scanner(System.in);
         String userInput;
 
-        while ((userInput = scan.nextLine()) != null) {
+        while (!(userInput = scan.nextLine()).equals("")) {
             out.println(userInput);
             System.out.println("Server response: " + in.readLine());
         }

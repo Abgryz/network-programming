@@ -7,7 +7,7 @@ import java.net.*;
 import java.time.LocalDateTime;
 
 public class TextServer {
-    ServerSocket server;
+    private final ServerSocket server;
 
     @SneakyThrows
     public TextServer(int port){
@@ -24,16 +24,19 @@ public class TextServer {
         }
     }
 
-    @SneakyThrows
     private static void clientInit(Socket clientSocket) {
         {
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            try {
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                System.out.printf("[%s] %s Received message: %s\n", LocalDateTime.now(), clientSocket.toString(), inputLine);
-                out.println("Server: " + inputLine);
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    System.out.printf("[%s] %s Received message: %s\n", LocalDateTime.now(), clientSocket, inputLine);
+                    out.println("Server: " + inputLine);
+                }
+            } catch (IOException e) {
+                System.out.println("Connection failed: " + clientSocket);
             }
         }
     }
