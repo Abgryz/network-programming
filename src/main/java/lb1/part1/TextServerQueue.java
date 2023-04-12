@@ -1,17 +1,21 @@
-package lb1;
+package lb1.part1;
 
 import lombok.SneakyThrows;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.time.LocalDateTime;
 
-public class TextServer {
+public class TextServerQueue {
     private final ServerSocket server;
 
     @SneakyThrows
-    public TextServer(int port){
-        this.server = new ServerSocket(port);
+    public TextServerQueue(int port, int backlog){
+        this.server = new ServerSocket(port, backlog);
         System.out.println("Server started");
     }
 
@@ -20,12 +24,7 @@ public class TextServer {
         while (true) {
             Socket clientSocket = server.accept();
             System.out.println("Client connected: " + clientSocket);
-            new Thread(() -> clientInit(clientSocket)).start();
-        }
-    }
 
-    private static void clientInit(Socket clientSocket) {
-        {
             try {
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -40,7 +39,8 @@ public class TextServer {
             }
         }
     }
+
     public static void main(String[] args) {
-        new TextServer(7777).start();
+        new TextServerQueue(7777, 1).start();
     }
 }

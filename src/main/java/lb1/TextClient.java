@@ -12,7 +12,7 @@ public class TextClient {
     @SneakyThrows
     public TextClient(String host, int port) {
         socket = new Socket(host, port);
-        System.out.println("Connected to server");
+        System.out.println("Connect to server...");
     }
 
     @SneakyThrows
