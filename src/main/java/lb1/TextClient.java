@@ -15,22 +15,18 @@ public class TextClient {
         System.out.println("Connected to server");
     }
 
+    @SneakyThrows
     public void connect() {
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-            Scanner scan = new Scanner(System.in);
-            String userInput;
+        Scanner scan = new Scanner(System.in);
+        String userInput;
 
-            while ((userInput = scan.nextLine()) != null) {
-                out.println(userInput);
-                System.out.println("Server response: " + in.readLine());
-            }
-
-            socket.close();
-        } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+        while ((userInput = scan.nextLine()) != null) {
+            out.println(userInput);
+            System.out.println("Server response: " + in.readLine());
         }
+        socket.close();
     }
 }

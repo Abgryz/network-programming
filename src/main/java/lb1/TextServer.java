@@ -32,7 +32,7 @@ public class TextServer {
 
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
-                System.out.printf("[%s][%s] Received message: %s\n", LocalDateTime.now(), clientSocket.toString(), inputLine);
+                System.out.printf("[%s] %s Received message: %s\n", LocalDateTime.now(), clientSocket.toString(), inputLine);
                 out.println("Server: " + inputLine);
             }
         }
