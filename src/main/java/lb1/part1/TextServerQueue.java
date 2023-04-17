@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
+import java.util.Scanner;
 
 public class TextServerQueue {
     private final ServerSocket server;
@@ -17,6 +18,7 @@ public class TextServerQueue {
     public TextServerQueue(int port, int backlog){
         this.server = new ServerSocket(port, backlog);
         System.out.println("Server started");
+        new Thread(this::serverConsole).start();
     }
 
     @SneakyThrows
@@ -40,6 +42,16 @@ public class TextServerQueue {
         }
     }
 
+    @SneakyThrows
+    private void serverConsole() {
+        Scanner scan = new Scanner(System.in);
+        while (true){
+            String input = scan.nextLine();
+            if (input.equals("/close")) {
+                server.close();
+            }
+        }
+    }
     public static void main(String[] args) {
         new TextServerQueue(7777, 1).start();
     }

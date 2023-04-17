@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import java.io.*;
 import java.net.*;
 import java.time.LocalDateTime;
+import java.util.Scanner;
 
 public class TextServerThread {
     private final ServerSocket server;
@@ -13,6 +14,7 @@ public class TextServerThread {
     public TextServerThread(int port){
         this.server = new ServerSocket(port);
         System.out.println("Server started");
+        new Thread(this::serverConsole).start();
     }
 
     @SneakyThrows
@@ -37,6 +39,16 @@ public class TextServerThread {
                 }
             } catch (IOException e) {
                 System.out.println("Connection failed: " + clientSocket);
+            }
+        }
+    }
+    @SneakyThrows
+    private void serverConsole() {
+        Scanner scan = new Scanner(System.in);
+        while (true){
+            String input = scan.nextLine();
+            if (input.equals("/close")) {
+                server.close();
             }
         }
     }
