@@ -27,10 +27,9 @@ public class TextServerQueue {
             Socket clientSocket = server.accept();
             System.out.println("Client connected: " + clientSocket);
 
-            try {
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true))
+            {
                 String inputLine;
                 while ((inputLine = in.readLine()) != null) {
                     System.out.printf("[%s] %s Received message: %s\n", LocalDateTime.now(), clientSocket, inputLine);

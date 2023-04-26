@@ -22,16 +22,15 @@ public class TextServerThread {
         while (true) {
             Socket clientSocket = server.accept();
             System.out.println("Client connected: " + clientSocket);
-            new Thread(() -> clientInit(clientSocket)).start();
+            new Thread(() -> clientIO(clientSocket)).start();
         }
     }
 
-    private static void clientInit(Socket clientSocket) {
+    private static void clientIO(Socket clientSocket) {
         {
-            try {
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true))
+            {
                 String inputLine;
                 while ((inputLine = in.readLine()) != null) {
                     System.out.printf("[%s] %s Received message: %s\n", LocalDateTime.now(), clientSocket, inputLine);

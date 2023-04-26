@@ -25,7 +25,7 @@ public class TextClient {
 
         while (!(userInput = scan.nextLine()).equals("")) {
             out.println(userInput);
-            System.out.println("Server response: " + in.readLine());
+            System.out.println(in.readLine());
         }
         socket.close();
     }
