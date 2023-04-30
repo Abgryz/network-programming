@@ -23,7 +23,7 @@ public class TextClient {
         Scanner scan = new Scanner(System.in);
         String userInput;
 
-        while (!(userInput = scan.nextLine()).equals("")) {
+        while (!(userInput = scan.nextLine()).equals("/exit")) {
             out.println(userInput);
             System.out.println(in.readLine());
         }

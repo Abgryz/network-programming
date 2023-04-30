@@ -21,37 +21,38 @@ public class NonBlockingServer {
         server.configureBlocking(false);
     }
 
+
     @SneakyThrows
     public void start(){
         System.out.println("Server opened in " + server.getLocalAddress());
         ExecutorService executor = Executors.newFixedThreadPool(2);
         while (true) {
-            SocketChannel socketChannel = server.accept();
-            if (socketChannel != null) {
-                System.out.println("Client connected: " + socketChannel);
-                executor.submit(() -> clientIO(socketChannel));
+            SocketChannel client = server.accept();
+            if (client != null) {
+                System.out.println("Client connected: " + client);
+                executor.submit(() -> clientIO(client));
             }
         }
     }
 
-    private void clientIO(SocketChannel socketChannel) {
+    private void clientIO(SocketChannel client) {
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         try {
-            while (socketChannel.read(buffer) > 0) {
+            while (client.read(buffer) > 0) {
                 buffer.flip();
                 String request = new String(buffer.array(), 0, buffer.limit());
                 buffer.clear();
-                System.out.printf("[%s] %s Client: %s\n", LocalDateTime.now(), socketChannel.getRemoteAddress(), request);
+                System.out.printf("[%s] %s Client: %s", LocalDateTime.now(), client.getRemoteAddress(), request);
 
                 String response = "Server: " + request;
                 buffer.put(response.getBytes());
                 buffer.flip();
-                socketChannel.write(buffer);
+                client.write(buffer);
                 buffer.clear();
             }
         }
         catch (IOException e){
-            System.out.println("Connection failed:\n" + e.getMessage());
+            System.out.println("Connection failed: " + e.getMessage());
         }
     }
 
