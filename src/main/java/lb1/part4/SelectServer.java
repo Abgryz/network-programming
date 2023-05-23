@@ -7,8 +7,6 @@ import java.net.InetSocketAddress;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
-import java.time.LocalDateTime;
-import java.util.Iterator;
 import java.util.Set;
 
 public class SelectServer {
@@ -33,9 +31,9 @@ public class SelectServer {
             Set<SelectionKey> selectedKeys = selector.selectedKeys();
             for (SelectionKey key : selectedKeys) {
                 if (key.isAcceptable()) {
-                    this.accept();
+                    accept();
                 } else if (key.isReadable()) {
-                    this.read(key);
+                    read(key);
                 }
             }
             selectedKeys.clear();
@@ -52,8 +50,8 @@ public class SelectServer {
 
     private void read(SelectionKey key){
         ByteBuffer buffer = ByteBuffer.allocate(1024);
+        SocketChannel client = (SocketChannel) key.channel();
         try {
-            SocketChannel client = (SocketChannel) key.channel();
             if (client.read(buffer) > 0) {
                 buffer.flip();
                 String request = new String(buffer.array(), 0, buffer.limit());
