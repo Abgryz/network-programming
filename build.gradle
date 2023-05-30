@@ -25,6 +25,9 @@ dependencies {
     implementation 'commons-net:commons-net:3.8.0'
     implementation 'org.slf4j:slf4j-api:1.7.32'
     implementation 'org.slf4j:slf4j-simple:1.7.32'
+
+    implementation 'javax.mail:javax.mail-api:1.6.2'
+    implementation 'com.sun.mail:javax.mail:1.6.2'
 }
 
 test {

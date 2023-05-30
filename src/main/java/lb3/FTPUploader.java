@@ -1,4 +1,4 @@
-package lb3part2;
+package lb3;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
