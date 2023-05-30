@@ -27,7 +27,7 @@ public class FileClient {
                     System.out.println("\nFile " + filename + " was successfully sent to the server");
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
     }

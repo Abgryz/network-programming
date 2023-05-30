@@ -34,7 +34,7 @@ public class ClientFileHandler {
 
         fis.close();
         dos.flush();
-//        dos.close();
+        dos.close();
         return true;
     }
     private static byte[] getHash(File file) throws NoSuchAlgorithmException, IOException {
