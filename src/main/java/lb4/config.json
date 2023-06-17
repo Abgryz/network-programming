@@ -1,0 +1,9 @@
+{
+  "auth": {
+    "user": "2522va@ukr.net",
+    "pass": "X0w0n167pfH6dZ9g"
+  },
+  "host": "smtp.ukr.net",
+  "port": 2525,
+  "secure": true
+}

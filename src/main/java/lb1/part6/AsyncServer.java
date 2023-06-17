@@ -1,63 +1,75 @@
 package lb1.part6;
+
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutionException;
 
-public class AsyncServer {
-    private final ExecutorService executor = Executors.newFixedThreadPool(10);
+@RequiredArgsConstructor
+public class AsyncServer{
+    private static final int BUFFER_SIZE = 1024;
     private final int port;
-    private ServerSocket server;
 
-    public AsyncServer(int port) {
-        this.port = port;
-    }
-
-    @SneakyThrows
     public void start() {
-        server = new ServerSocket(port);
-        System.out.println("Server started on port " + port);
+        try (AsynchronousServerSocketChannel serverChannel = AsynchronousServerSocketChannel.open()) {
+            InetSocketAddress hostAddress = new InetSocketAddress("localhost", port);
+            serverChannel.bind(hostAddress);
+            System.out.println("Server opened on " + port);
 
-        while (true) {
-            CompletableFuture.runAsync(() -> {
-                try {
-                    Socket client = server.accept();
-                    CompletableFuture.runAsync(() -> handleClient(client))
-                        .thenRunAsync(() -> System.out.println("Client disconnected: " + client));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+            serverChannel.accept(null, new CompletionHandler<AsynchronousSocketChannel, Void>() {
+                @Override
+                @SneakyThrows
+                public void completed(AsynchronousSocketChannel clientChannel, Void attachment) {
+                    serverChannel.accept(null, this);
+                    System.out.println("Client connected: " + clientChannel.getRemoteAddress());
+                    handleClientRequest(clientChannel);
+                }
+
+                @Override
+                public void failed(Throwable throwable, Void attachment) {
+                    System.out.println("Error at client connection: " + throwable.getMessage());
                 }
             });
-        }
-    }
 
-    private void handleClient(Socket client) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-             PrintWriter writer = new PrintWriter(client.getOutputStream(), true)) {
-            String inputLine;
-            while ((inputLine = reader.readLine()) != null) {
-                System.out.println("Received message: " + inputLine);
-                String response = handleRequest(inputLine);
-                writer.println(response);
-            }
-        } catch (IOException e) {
+            // Чтобы сервер не останавливался сразу после запуска
+            Thread.currentThread().join();
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    private String handleRequest(String message) {
-        // Обработка сообщения от клиента
-        return "Echo: " + message;
+    @SneakyThrows
+    private static void handleClientRequest(AsynchronousSocketChannel clientChannel) {
+        while (true){
+            ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+
+            try {
+                clientChannel.read(buffer).get();
+                buffer.flip();
+
+                String clientMessage = StandardCharsets.UTF_8.decode(buffer).toString();
+                System.out.println(clientChannel.getRemoteAddress() + ": " + clientMessage);
+
+                String response = "Server: " + clientMessage;
+                ByteBuffer responseBuffer = StandardCharsets.UTF_8.encode(response);
+
+                clientChannel.write(responseBuffer).get();
+                buffer.clear();
+            } catch (ExecutionException | InterruptedException | IOException e) {
+                System.out.println("Connection with " + clientChannel.getRemoteAddress() + " failed");
+                return;
+            }
+        }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         new AsyncServer(7777).start();
     }
 }

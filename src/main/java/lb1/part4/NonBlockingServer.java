@@ -1,4 +1,4 @@
-package lb1.part3;
+package lb1.part4;
 
 import lombok.SneakyThrows;
 

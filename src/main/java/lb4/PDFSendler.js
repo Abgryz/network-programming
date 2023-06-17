@@ -14,7 +14,7 @@ async function sendEmail() {
         attachments: [
             {
                 filename: 'README.pdf',
-                path: '../../resources/input/курсач).pdf',
+                path: '../../resources/input/pdf.pdf',
                 contentType: 'application/pdf'
             }
         ]
